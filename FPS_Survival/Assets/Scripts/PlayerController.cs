@@ -11,13 +11,13 @@ public class PlayerController : MonoBehaviour
     public float cameraRotationLimit;
     public float jumpForce;
     public float crouchPosY;
+    public bool isRun = false;
 
     float currentCameraRotationX = 0.0f;
     float moveSpeed;
     float applyCrouchPosY;
     float originPosY;
     
-    bool isRun = false;
     bool isGround = true;
     bool isCrouch = false;
 
@@ -26,10 +26,14 @@ public class PlayerController : MonoBehaviour
     Rigidbody rb2d;
     CapsuleCollider capsuleCollider;
 
-    void Start()
+    void Awake()
     {
         rb2d = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
+    }
+
+    void Start()
+    {
         moveSpeed = walkSpeed;
         originPosY = theCamera.transform.localPosition.y;
         applyCrouchPosY = originPosY;
@@ -43,6 +47,7 @@ public class PlayerController : MonoBehaviour
         TryCrouch();
         CameraRotation();
         CharacterRotation();
+        if(Input.GetKeyDown(KeyCode.Escape)) UnityEditor.EditorApplication.isPlaying = false;
     }
 
     void FixedUpdate()
@@ -77,13 +82,13 @@ public class PlayerController : MonoBehaviour
 
     void Running()
     {
+        if (isCrouch) Crouch();
         isRun = true;
         moveSpeed = runSpeed;
     }
 
     void RunningCancel()
     {
-        if (isCrouch) Crouch();
         isRun = false;
         moveSpeed = walkSpeed;
     }
@@ -109,12 +114,7 @@ public class PlayerController : MonoBehaviour
 
     void TryCrouch()
     {
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            Crouch();
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.LeftControl))
         {
             Crouch();
         }
