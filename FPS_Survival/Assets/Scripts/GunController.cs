@@ -15,6 +15,7 @@ public class GunController : MonoBehaviour
 
     AudioSource audioSource;
     PlayerController player;
+    CrossHair crossHair;
     Vector3 originPos; //본래 포지션 값
     RaycastHit hitInfo;
 
@@ -22,6 +23,7 @@ public class GunController : MonoBehaviour
     {
         player = FindObjectOfType<PlayerController>();
         audioSource = GetComponent<AudioSource>();
+        crossHair = FindObjectOfType<CrossHair>();
     }
 
     void Start()
@@ -53,7 +55,7 @@ public class GunController : MonoBehaviour
 
     void Fire()
     {
-        if (!isReload)
+        if (!isReload && !player.isRun)
         {
             if (currGun.currBullet > 0) Shoot();
             else
@@ -66,6 +68,7 @@ public class GunController : MonoBehaviour
 
     void Shoot()
     {
+        crossHair.FireAnim();
         --currGun.currBullet;
         currFireDelay = currGun.fireDelay;
         PlaySoundEffect(currGun.fireSound);
@@ -77,7 +80,11 @@ public class GunController : MonoBehaviour
 
     void Hit()
     {
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hitInfo, currGun.range))
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward + 
+            new Vector3(Random.Range(-crossHair.GetAccuracy() - currGun.accuracy, crossHair.GetAccuracy() + currGun.accuracy),
+                        Random.Range(-crossHair.GetAccuracy() - currGun.accuracy, crossHair.GetAccuracy() + currGun.accuracy), 
+                        0), 
+            out hitInfo, currGun.range))
         {
             var hitEffectClone = Instantiate(hitEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal)) as GameObject;
             Destroy(hitEffectClone, 0.5f);
@@ -144,6 +151,7 @@ public class GunController : MonoBehaviour
     {
         isFineSightMode = !isFineSightMode;
         currGun.anim.SetBool("FineSightMode", isFineSightMode);
+        crossHair.FineSightAnim(isFineSightMode);
         if (isFineSightMode)
         {
             StopAllCoroutines();
@@ -217,5 +225,15 @@ public class GunController : MonoBehaviour
     {
         audioSource.clip = myClip;
         audioSource.Play();
+    }
+
+    public Gun GetGun()
+    {
+        return currGun;
+    }
+
+    public bool GetFineSightMode()
+    {
+        return isFineSightMode;
     }
 }

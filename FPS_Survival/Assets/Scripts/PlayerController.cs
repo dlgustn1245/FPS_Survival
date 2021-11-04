@@ -20,16 +20,20 @@ public class PlayerController : MonoBehaviour
     
     bool isGround = true;
     bool isCrouch = false;
+    bool isWalk = false;
 
     public Camera theCamera;
 
-    Rigidbody rb2d;
+    Rigidbody rb;
     CapsuleCollider capsuleCollider;
+    CrossHair crossHair;
+    Vector3 lastPos;
 
     void Awake()
     {
-        rb2d = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
+        crossHair = FindObjectOfType<CrossHair>();
     }
 
     void Start()
@@ -53,6 +57,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+        MoveCheck();
     }
 
     void Move()
@@ -65,7 +70,18 @@ public class PlayerController : MonoBehaviour
 
         Vector3 velocity = (moveHorizontal + moveVertical).normalized * moveSpeed;
 
-        rb2d.MovePosition(transform.position + velocity * Time.deltaTime);
+        rb.MovePosition(transform.position + velocity * Time.deltaTime);
+    }
+
+    void MoveCheck()
+    {
+        if (!isRun && !isCrouch && isGround)
+        {
+            if (Vector3.Distance(lastPos, this.transform.position) >= 0.01f) isWalk = true; //경사면에서 미끄러지는 경우가 있기때문에 여유를 둠
+            else isWalk = false;
+            crossHair.WalkingAnim(isWalk);
+            lastPos = this.transform.position;
+        }
     }
 
     void TryRun()
@@ -84,18 +100,21 @@ public class PlayerController : MonoBehaviour
     {
         if (isCrouch) Crouch();
         isRun = true;
+        crossHair.RunningAnim(isRun);
         moveSpeed = runSpeed;
     }
 
     void RunningCancel()
     {
         isRun = false;
+        crossHair.RunningAnim(isRun);
         moveSpeed = walkSpeed;
     }
 
     void IsGround()
     {
         isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y + 0.1f);
+        crossHair.RunningAnim(!isGround);
     }
     
     void TryJump()
@@ -109,7 +128,7 @@ public class PlayerController : MonoBehaviour
     void Jump()
     {
         if (isCrouch) Crouch(); //앉은 상태에서 점프 -> 앉은 상태 해제
-        rb2d.velocity = transform.up * jumpForce;
+        rb.velocity = transform.up * jumpForce;
     }
 
     void TryCrouch()
@@ -123,6 +142,7 @@ public class PlayerController : MonoBehaviour
     void Crouch()
     {
         isCrouch = !isCrouch;
+        crossHair.CrouchingAnim(isCrouch);
         if (isCrouch)
         {
             moveSpeed = crouchSpeed;
@@ -167,6 +187,6 @@ public class PlayerController : MonoBehaviour
     {
         float yRotation = Input.GetAxisRaw("Mouse X");
         Vector3 characterRotationY = new Vector3(0.0f, yRotation, 0.0f) * lookSensitivity;
-        rb2d.MoveRotation(rb2d.rotation * Quaternion.Euler(characterRotationY));
+        rb.MoveRotation(rb.rotation * Quaternion.Euler(characterRotationY));
     }
 }
