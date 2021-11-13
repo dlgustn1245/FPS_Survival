@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class GunController : MonoBehaviour
 {
+    public static bool isActivated = false;
+
     public Gun currGun;
     public Camera cam;
     public GameObject hitEffect;
+    public bool isFineSightMode = false; //정조준 모드
 
     float currFireDelay;
 
     bool isReload = false;
-    bool isFineSightMode = false; //정조준 모드
+    
 
     AudioSource audioSource;
     PlayerController player;
@@ -33,10 +36,14 @@ public class GunController : MonoBehaviour
 
     void Update()
     {
-        GunFireRate();
-        TryFire();
-        TryReload();
-        TryFineSight();
+        if (isActivated)
+        {
+            GunFireRate();
+            TryFire();
+            TryReload();
+            TryFineSight();
+        }
+            
         if (player.isRun) CancelFineSight();
     }
 
@@ -97,6 +104,15 @@ public class GunController : MonoBehaviour
         {
             CancelFineSight();
             StartCoroutine(Reload());
+        }
+    }
+
+    public void CancelReload()
+    {
+        if (isReload)
+        {
+            StopAllCoroutines();
+            isReload = false;
         }
     }
 
@@ -235,5 +251,18 @@ public class GunController : MonoBehaviour
     public bool GetFineSightMode()
     {
         return isFineSightMode;
+    }
+
+    public void GunChange(Gun gun)
+    {
+        if (WeaponManager.currWeapon) WeaponManager.currWeapon.gameObject.SetActive(false);
+
+        currGun = gun;
+        WeaponManager.currWeapon = currGun.GetComponent<Transform>();
+        WeaponManager.currWeaponAnim = currGun.anim;
+
+        currGun.transform.localPosition = Vector3.zero;
+        currGun.gameObject.SetActive(true);
+        isActivated = true;
     }
 }

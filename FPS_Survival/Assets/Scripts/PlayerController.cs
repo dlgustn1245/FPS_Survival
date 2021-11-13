@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
         TryCrouch();
         CameraRotation();
         CharacterRotation();
-        if(Input.GetKeyDown(KeyCode.Escape)) UnityEditor.EditorApplication.isPlaying = false;
+        if (Input.GetKeyDown(KeyCode.Escape)) UnityEditor.EditorApplication.isPlaying = false;
     }
 
     void FixedUpdate()
@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
     void IsGround()
     {
         isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y + 0.1f);
-        crossHair.RunningAnim(!isGround);
+        crossHair.JumpAnim(!isGround);
     }
     
     void TryJump()
@@ -186,6 +186,11 @@ public class PlayerController : MonoBehaviour
     void CharacterRotation()
     {
         float yRotation = Input.GetAxisRaw("Mouse X");
+        if (yRotation == 0)
+        {
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            return;
+        }
         Vector3 characterRotationY = new Vector3(0.0f, yRotation, 0.0f) * lookSensitivity;
         rb.MoveRotation(rb.rotation * Quaternion.Euler(characterRotationY));
     }
