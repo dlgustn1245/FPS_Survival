@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody rb;
     CapsuleCollider capsuleCollider;
     CrossHair crossHair;
+    StatusController statusController;
     Vector3 lastPos;
 
     void Awake()
@@ -34,6 +35,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         crossHair = FindObjectOfType<CrossHair>();
+        statusController = FindObjectOfType<StatusController>();
     }
 
     void Start()
@@ -86,11 +88,11 @@ public class PlayerController : MonoBehaviour
 
     void TryRun()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && statusController.GetCurrentSP() > 0)
         {
             Running();
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+        if (Input.GetKeyUp(KeyCode.LeftShift) || statusController.GetCurrentSP() <= 0)
         {
             RunningCancel();
         }
@@ -101,6 +103,7 @@ public class PlayerController : MonoBehaviour
         if (isCrouch) Crouch();
         isRun = true;
         crossHair.RunningAnim(isRun);
+        statusController.DecreaseStamina(10);
         moveSpeed = runSpeed;
     }
 
@@ -119,7 +122,7 @@ public class PlayerController : MonoBehaviour
     
     void TryJump()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && isGround)
+        if(Input.GetKeyDown(KeyCode.Space) && isGround && statusController.GetCurrentSP() > 0)
         {
             Jump();
         }
@@ -128,6 +131,7 @@ public class PlayerController : MonoBehaviour
     void Jump()
     {
         if (isCrouch) Crouch(); //앉은 상태에서 점프 -> 앉은 상태 해제
+        statusController.DecreaseStamina(100);
         rb.velocity = transform.up * jumpForce;
     }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//추상 클래스
+//추상 클래스 -> 미완성 클래스, 추상 메소드를 선언(구현 x, 추상 메소드 -> 자식 클래스에서 구현)
 public abstract class CloseWeaponController : MonoBehaviour
 {
     public CloseWeapon currCloseWeapon;
