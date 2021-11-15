@@ -15,7 +15,6 @@ public class GunController : MonoBehaviour
 
     bool isReload = false;
     
-
     AudioSource audioSource;
     PlayerController player;
     CrossHair crossHair;

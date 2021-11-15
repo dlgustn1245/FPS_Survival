@@ -5,10 +5,12 @@ using UnityEngine;
 public class Rock : MonoBehaviour
 {
     public SphereCollider col;
-    public GameObject rockBody; //바위
+    public GameObject rock; //바위
     public GameObject debris; // 깨진 바위
     public GameObject rock_effect; //채굴 이펙트
+    public GameObject rock_Item_Prefab;
     public int hp;
+    public int count;
     public float destroyTime; //파편 제거 시간
     public string strike_sound;
     public string destroy_sound;
@@ -27,7 +29,12 @@ public class Rock : MonoBehaviour
     {
         SoundManager.Instance.PlaySE(destroy_sound);
         col.enabled = false;
-        Destroy(rockBody);
+        Destroy(rock);
+
+        for (int i = 0; i < count; i++)
+        {
+            Instantiate(rock_Item_Prefab, rock.transform.position, Quaternion.identity);
+        }
 
         debris.SetActive(true);
         Destroy(debris, destroyTime);

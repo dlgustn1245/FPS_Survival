@@ -263,11 +263,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 1693658129571888199}
-  rockBody: {fileID: 1963706643365170122}
+  rock: {fileID: 1963706643365170122}
   debris: {fileID: 1963706643277057013}
   rock_effect: {fileID: 7223626349327647338, guid: 1dbaf62dd0436d44596a32de1fedddb5,
     type: 3}
+  rock_Item_Prefab: {fileID: 2342153206619504732, guid: 252a275dc52691647a9ce4c7e5775f5a,
+    type: 3}
   hp: 3
+  count: 5
   destroyTime: 5
   strike_sound: Pickaxe_Strike
   destroy_sound: Rock_Destroy
@@ -837,7 +840,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 21ff66e25a817074b85856ed524fa686,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 21ff66e25a817074b85856ed524fa686,
         type: 3}
@@ -1094,7 +1097,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 52149c00f76610d47b93cbce0553b9b0,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 52149c00f76610d47b93cbce0553b9b0,
         type: 3}
