@@ -8,6 +8,7 @@ public class ActionController : MonoBehaviour
     public LayerMask layerMask;
     public Text actionText;
     public float range;
+    public Inventory inventory;
 
     bool pickupActivated = false;
 
@@ -47,6 +48,7 @@ public class ActionController : MonoBehaviour
             if (hitInfo.transform)
             {
                 Debug.Log(hitInfo.transform.GetComponent<ItemPcikUp>().item.itemName + "획득");
+                inventory.AcquireItem(hitInfo.transform.GetComponent<ItemPcikUp>().item);
                 Destroy(hitInfo.transform.gameObject);
                 ItemInfoDisappear();
             }
