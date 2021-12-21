@@ -19,5 +19,4 @@ public class CloseWeapon : MonoBehaviour
     public bool isHand;
 
     public Animator anim;
-    
 }
